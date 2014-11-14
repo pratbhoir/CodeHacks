@@ -1,0 +1,66 @@
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Dynamic Unobtrusive Validation</h2>
+
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "theform" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Parent</h4>
+        <hr />
+        @Html.ValidationSummary(true)
+
+        <button id="addButton"> Add Dynamic Input</button>
+        <br /><br />
+        <div id="addButtonSpan"></div>
+        <br /><br />
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+
+<script type="text/javascript">
+
+    var str = '<input class="required" data-val="true" data-val-number="The field age must be a number." data-val-range="The questions to ask must be less than Max. Questions" data-val-range-max="4" data-val-range-min="1" data-val-required="The questions to ask field is required." id="age" name="age" type="text" value=""> <span class="field-validation-valid" data-valmsg-for="age" data-valmsg-replace="true"></span>'
+
+    $('#addButton').click(function () {
+        //Adding Dynamic COntent to Html
+        $('#addButtonSpan').html(str);
+        
+        //function to re add the validations
+        parseDynamicContent('#theform');
+
+        return false;
+    });
+
+
+    function parseDynamicContent(formSelector) {
+        // Target Form
+        var $form = $(formSelector);
+
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+        // Check document for changes
+        $.validator.unobtrusive.parse(document);
+
+        // Re add validation with changes
+        $form.validate($form.data("unobtrusiveValidation").options);
+    }
+
+</script>
