@@ -1,0 +1,115 @@
+
+namespace Mvc5Demo.Controllers
+{
+
+    public class SessionTimeoutFilterAttribute : ActionFilterAttribute
+    {
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            HttpSessionStateBase session = filterContext.HttpContext.Session;
+
+            // If the browser session or authentication session has expired...
+            if ((session.IsNewSession || session["LoginUser"] == null) && !filterContext.HttpContext.Request.IsAuthenticated)
+            {
+                if (filterContext.HttpContext.Request.IsAjaxRequest())
+                {
+                    // For AJAX requests, return result as a simple string, 
+                    // and inform calling JavaScript code that a user should be redirected.
+                    ContentResult result = new ContentResult() { Content = "SessionTimeout", ContentType = "text/html" };
+                    filterContext.Result = result;
+                }
+                else
+                {
+                    // For round-trip requests,
+                    filterContext.Result = new RedirectToRouteResult(
+                    new RouteValueDictionary {
+					{ "Controller", "Accounts" },
+					{ "Action", "Login" }
+					});
+                }
+            }
+            base.OnActionExecuting(filterContext);
+        }
+        //other methods...
+    }
+    
+    public class MyActionFilterAttribute : ActionFilterAttribute
+    {
+        public override void OnResultExecuting(ResultExecutingContext context)
+        {
+            base.OnResultExecuting(context);
+
+            context.RequestContext.HttpContext.Response.Write("<!-- Buuu! -->");
+        }
+
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            base.OnActionExecuting(filterContext);
+        }
+
+    }
+
+
+    public class HomeController : Controller
+    {
+        public ActionResult Index()
+        {
+            ViewBag.Count = Convert.ToInt32(HttpContext.Application["HitCounter"]);
+            return View();
+        }
+
+        [MyActionFilterAttribute]
+        public ActionResult About()
+        {
+            ViewBag.Message = "Your application description page.";
+
+            return View();
+        }
+
+        [Authorize]
+        public ActionResult Authenticated()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [SessionTimeoutFilter]
+        public JsonResult GetAjax()
+        {
+            return Json("done");
+        }
+
+        public ActionResult Dashoard()
+        {
+            //ViewBag.Count = Convert.ToInt32(HttpContext.Application["HitCounter"]);
+            return View();
+        }
+
+        public PartialViewResult getDashboardStudentContent()
+        {
+            Mvc5DemoDBEntities db = new Mvc5DemoDBEntities();
+            return PartialView("_DashboardStudent", db.Students.ToList());
+        }
+
+        public PartialViewResult getDashboardParentContent()
+        {
+            Mvc5DemoDBEntities db = new Mvc5DemoDBEntities();
+            return PartialView("_DashboardParent", db.Parents.ToList());
+        }
+
+        public PartialViewResult getDashboardContent(string module)
+        {
+            Mvc5DemoDBEntities db = new Mvc5DemoDBEntities();
+            switch (module)
+            {
+                case "student":
+                    return PartialView("_DashboardStudent", db.Students.ToList());
+                case "parent":
+                    return PartialView("_DashboardParent", db.Parents.ToList());
+            }
+            return PartialView("_DashboardParent", db.Parents.ToList());
+        }
+
+
+    }
+}
