@@ -1,3 +1,10 @@
+//In web.config
+<system.web>
+     <globalization uiCulture="en" culture="en-GB"/>
+</system.web>
+
+
+//In javascript
  $(document).ready(function () {
 
         // Jquery Validation accepts date in dd/MM/yyyy , dd-MM-yyyy and dd.MM.yyyy format
