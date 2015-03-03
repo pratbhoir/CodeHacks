@@ -1,0 +1,70 @@
+
+namespace Mvc5Demo.Controllers
+{
+    public class CompareValidatorController : Controller
+    {
+        //
+        // GET: /CompareValidator/
+        public ActionResult Index()
+        {
+            throw new HttpUnhandledException();
+            return View();
+        }
+
+        protected override void OnException(ExceptionContext filterContext)
+        {
+            Exception ex = filterContext.Exception;
+            filterContext.Result = new ViewResult
+            {
+                ViewName = "~/Views/Shared/_Error.cshtml",
+                ViewData = filterContext.Controller.ViewData,
+                TempData = filterContext.Controller.TempData
+            };
+            filterContext.Controller.ViewBag.Message = "There was some error while processing your request. Please try again later.";
+            filterContext.Controller.ViewBag.Description = ex.Message;
+            filterContext.Controller.ViewBag.StackTrace = ex.StackTrace;
+            filterContext.ExceptionHandled = true;
+        }
+    }
+}
+
+
+
+
+/////View Part
+
+
+
+<style>
+    #block {
+        margin: 10px;
+    }
+
+    #detailsBlock {
+        display: none;
+    }
+</style>
+
+<div id="block">
+    <div class="alert alert-danger alert-dismissible fade in" role="alert">
+        @*<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>*@
+        <h4>Oh! You got an error!</h4>
+        <p>@ViewBag.Message.</p>
+        <p>
+            <button type="button" class="btn btn-danger" onclick='$("#detailsBlock").toggle();'>View Details</button>
+            <button type="button" class="btn btn-default" onclick="window.history.back();">Or go Back!</button>
+        </p>
+        <div id="detailsBlock">
+            <br /><br />
+            <div>
+                <b>Description:</b> <br />
+                @ViewBag.Description
+            </div>
+            <br />
+            <div>
+                <b>Stack Trace:</b> <br />
+                @ViewBag.StackTrace
+            </div>
+        </div>
+    </div>
+</div>
