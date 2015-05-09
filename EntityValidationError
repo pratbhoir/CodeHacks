@@ -1,3 +1,5 @@
+using System.Data.Entity.Validation;
+
     try
     {
         System.Diagnostics.Debug.WriteLine("Its a Trace Message");
