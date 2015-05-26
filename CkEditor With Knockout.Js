@@ -9,7 +9,7 @@
     <title>CkEditor With Knockout.Js</title>
 </head>
 <body>
-
+    <a href="http://jsbin.com/rolihuwidu/2/edit">Link to demo</a>
     <h2 data-bind="text:Title"></h2>
 
     <textarea id="editor" data-bind="ckeditor:HtmlContent, valueUpdate: 'afterkeydown'"></textarea>
