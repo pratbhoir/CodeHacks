@@ -1,0 +1,4 @@
+//Going to the specific framework folder which you are going to select as Application Pool
+cd C:\Windows\Microsoft.NET\Framework64\v4.0.30319
+//Select the apaplication folder
+aspnet_regiis -pef "connectionStrings" "C:\Adrenalin_Documents\EIFF_Publish"
