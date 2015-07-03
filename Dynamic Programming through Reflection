@@ -1,0 +1,37 @@
+using System;
+using System.Reflection;
+
+public class Program
+{
+	public static void Main()
+	{
+		Console.WriteLine("Hello World");
+		string command = Console.ReadLine();
+		Type type = typeof (FunctionRepository);
+		MethodInfo method = type.GetMethod(command);
+		method.Invoke(null, new Object[]{10, 20});
+	}
+}
+
+public class FunctionRepository
+{
+	public static void add(int a, int b)
+	{
+		Console.WriteLine(a + b);
+	}
+
+	public static void sub(int a, int b)
+	{
+		Console.WriteLine(a - b);
+	}
+
+	public static void mul(int a, int b)
+	{
+		Console.WriteLine(a * b);
+	}
+
+	public static void div(int a, int b)
+	{
+		Console.WriteLine(a / b);
+	}
+}
