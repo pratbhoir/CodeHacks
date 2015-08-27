@@ -1,0 +1,35 @@
+First you'll need an actual form:
+
+<form id="myForm">
+    Username: <input type="text" id="username" class="required" />
+    <input type="submit" />
+</form>
+then:
+
+$(document).ready(function(){
+    $('#myForm').on('submit', function(e){
+        e.preventDefault();
+        var len = $('#username').val().length;
+        if (len < 6 && len > 1) {
+            this.submit();
+        }
+    });
+});
+OR
+$(document).ready(function(){
+    $('#myForm').on('submit', function(e){
+        var len = $('#username').val().length;
+        if (len < 6 && len > 1) {
+            e.preventDefault();
+        }
+    });
+});
+
+Or in HTML5 you can use the pattern attribute (not supported in Safari and IE9-and below):
+
+<form id="myForm">
+    Username: <input type="text" id="username" pattern=".{2,5}" required />
+    <input type="submit" />
+</form>
+
+http://jsfiddle.net/zoutepopcorns/b5Kqs/
