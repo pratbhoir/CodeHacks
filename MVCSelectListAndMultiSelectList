@@ -1,0 +1,22 @@
+
+//Link : http://www.mikesdotnetting.com/article/265/asp-net-mvc-dropdownlists-multiple-selection-and-enum-support
+
+//Controller Code
+using (var db = new NorthwindContext())
+{
+    var categories = db.Categories.Select(c => new { 
+        CategoryID = c.CategoryID, 
+        CategoryName = c.CategoryName 
+    }).ToList();
+    var selectedOptions = new List<Int>{1,3};
+    ViewBag.Categories = new MultiSelectList(categories, "CategoryID", "CategoryName",selectedOptions);
+    return View();
+}
+
+//View Code
+@Html.DropDownList("CategoryId", (MultiSelectList)ViewBag.Categories, new { multiple = "multiple"})
+//OR
+@Html.ListBox("CategoryId", (MultiSelectList)ViewBag.Categories)
+//With Html Attributes
+//OR
+@Html.ListBox("CategoryId", (MultiSelectList)ViewBag.Categories, new { id = "CategoryId"})
