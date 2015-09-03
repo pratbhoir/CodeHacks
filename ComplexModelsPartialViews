@@ -1,0 +1,50 @@
+Complex models and partial views - model binding issue in ASP.NET MVC 3
+
+public class SimpleModel
+{
+    public string Status { get; set; }
+}
+
+public class ComplexModel
+{
+    public ComplexModel()
+    {
+        Simple = new SimpleModel();
+    }
+
+    public SimpleModel Simple{ get; set; }
+}
+
+
+Answers
+1)
+I would recommend you using Editor templates:
+
+@model ComplexModel
+@using (Html.BeginForm()) 
+{
+    @Html.EditorFor(x => x.Simple)
+    <input type="submit" value="Save" />
+}
+and then put the simple partial inside ~/Views/Shared/EditorTemplates/SimpleModel.cshtml or inside ~/Views/Home/EditorTemplates/SimpleModel.cshtml where Home is the name of your controller:
+
+@model SimpleModel
+@Html.LabelFor(model => model.Status)
+@Html.EditorFor(model => model.Status)
+Of course if you prefer to have the partial in some special location and not follow the conventions (why would you?) you could specify the location:
+
+@Html.EditorFor(x => x.Simple, "~/Views/SomeUnexpectedLocation/_SimplePartial.cshtml")
+
+
+2)
+Pass a ViewDataDictionary with a TemplateInfo where HtmlFieldPrefix is set to the name of the SimpleModel-property:
+
+ @Html.Partial("_SimplePartial", Model.Simple, new ViewDataDictionary(ViewData)
+    {
+        TemplateInfo = new System.Web.Mvc.TemplateInfo
+        {
+            HtmlFieldPrefix = "Simple"
+        }
+    })
+  
+  
