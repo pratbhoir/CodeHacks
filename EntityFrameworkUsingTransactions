@@ -1,0 +1,65 @@
+Using Single Context
+
+EF 6 has introduced database.BeginTransaction and Database.UseTransaction to provide more control over transactions. 
+Now, you can execute multiple operations in a single transaction as shown below:
+
+    using (System.Data.Entity.DbContextTransaction dbTran = context.Database.BeginTransaction( ))
+        {
+            try
+            {
+                Student std1 = new Student() { StudentName = "newstudent" };
+                context.Students.Add(std1);
+                context.Database.ExecuteSqlCommand(
+                    @"UPDATE Student SET StudentName = 'Edited Student Name'" +
+                        " WHERE StudentID =1"
+                    );
+                context.Students.Remove(std1);
+
+                //saves all above operations within one transaction
+                context.SaveChanges();
+
+                //commit transaction
+                dbTran.Commit();
+            }
+            catch (Exception ex)
+            {
+                //Rollback transaction if exception occurs
+                dbTran.Rollback();
+            }
+
+        }
+database.UseTransaction allows the DbContext to use a transaction which was started outside of the Entity Framework.
+
+
+-------------------------------------------------------------------------------------------------------------------
+Using Multiple COntext
+
+If  context1.SaveChanges() succeeds but context2.SaveChanges() fails the whole distributed transaction is aborted. 
+But unfortunately the Entity Framework has already discarded the changes on context1, 
+so you can't replay or effectively log the failure.
+
+But if you change your code to look like this:
+
+using (TransactionScope scope = new TransactionScope())
+{
+    //Do something with context1
+    //Do something with context2
+
+    //Save Changes but don't discard yet
+    context1.SaveChanges(false);
+
+    //Save Changes but don't discard yet
+    context2.SaveChanges(false);
+
+    //if we get here things are looking good.
+    scope.Complete();
+    context1.AcceptAllChanges();
+    context2.AcceptAllChanges();
+
+}
+While the call to SaveChanges(false) sends the necessary commands to the database, the context itself is not changed, 
+so you can do it again if necessary, or you can interrogate the ObjectStateManager if you want.
+
+This means if the transaction actually aborts you can compensate, by either re-trying or 
+logging state of each contexts ObjectStateManager somewhere.
+Link: http://blogs.msdn.com/b/alexj/archive/2009/01/11/savechanges-false.aspx
