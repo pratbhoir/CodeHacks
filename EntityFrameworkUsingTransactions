@@ -30,6 +30,33 @@ Now, you can execute multiple operations in a single transaction as shown below:
         }
 database.UseTransaction allows the DbContext to use a transaction which was started outside of the Entity Framework.
 
+------------------------------------------------------------------------------------------------------
+For Multiple SaveChanges in Entity
+Now in EF6 it's easier to acheeve this by using dbContext.Database.BeginTransaction()
+
+like this :
+
+using (var context = new BloggingContext())
+{
+    using (var dbContextTransaction = context.Database.BeginTransaction())
+    {
+        try
+        {
+            // do your changes
+            context.SaveChanges();
+
+            // do another changes
+            context.SaveChanges();
+
+            dbContextTransaction.Commit();
+        }
+        catch (Exception)
+        {
+            dbContextTransaction.Rollback();
+        }
+    }
+}
+for more information look at this https://msdn.microsoft.com/en-us/data/dn456843
 
 -------------------------------------------------------------------------------------------------------------------
 Using Multiple COntext
