@@ -1,0 +1,41 @@
+
+
+Disable filtering on the first column:
+$('#example').dataTable( {
+  "columnDefs": [ {
+      "targets": 0,
+      "searchable": false
+    } ]
+} );
+
+Disable sorting on the first and third columns:
+$('#example').dataTable( {
+  "columnDefs": [ {
+      "targets": [ 0, 2 ],
+      "orderable": false
+    } ]
+} );
+
+Disable ordering on columns which have a class of 'nosort':
+#example').dataTable( {
+  "columnDefs": [ {
+      "targets": 'nosort',
+      "orderable": false
+    } ]
+} );
+
+Making the Columns Invisible and ordered by class of 'nosort':
+#example').dataTable( {
+  "columnDefs": [ {
+      "targets": 'nosort',
+      "orderable": false,
+      "visible": false
+    } ]
+} );
+
+Default ordering (sorting)
+$(document).ready(function() {
+    $('#example').DataTable( {
+        "order": [[ 3, "desc" ]]
+    } );
+} );
