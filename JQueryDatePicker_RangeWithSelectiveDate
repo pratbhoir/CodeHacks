@@ -1,0 +1,54 @@
+
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+
+<label for="from">From</label>
+<input type="text" id="from" name="from">
+<label for="to">to</label>
+<input type="text" id="to" name="to">
+
+
+</script>
+//var date = "10/09/2015", days = 5; 
+//functionAddDates(date,days);
+
+var duration = 3;
+$("#from").datepicker({
+    defaultDate: "+1w",
+    changeMonth: true,
+    changeYear: true,
+    dateFormat: "dd/mm/yy",
+    numberOfMonths: 1,
+    onClose: function (selectedDate) {
+        $("#to").datepicker("option", "minDate", selectedDate);
+        var maxDate = functionAddDates(selectedDate, duration)
+        $("#to").datepicker("option", "maxDate", maxDate);
+    }
+});
+$("#to").datepicker({
+    defaultDate: "+1w",
+    changeMonth: true,
+    changeYear: true,
+    numberOfMonths: 1,
+    dateFormat: "dd/mm/yy",
+    onClose: function (selectedDate) {
+        $("#from").datepicker("option", "maxDate", selectedDate);
+    }
+});
+
+function functionAddDates(strDate, nrAddDays) {
+    dateArr = strDate.split('/');
+    var date = new Date(parseInt(dateArr[2]), parseInt(dateArr[1]) - 1, parseInt(dateArr[0]));
+    /* Add nr of days*/
+    date.setDate(date.getDate() + nrAddDays);
+    var dd = date.getDate();
+    var mm = date.getMonth() + 1;
+    var y = date.getFullYear();
+
+    var result = dd + '/' + mm + '/' + y;
+    return result;
+}
+</script>
