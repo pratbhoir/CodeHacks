@@ -3,4 +3,5 @@ SELECT OBJECT_NAME(object_id) FROM sys.sql_modules
     WHERE OBJECTPROPERTY(object_id, 'IsProcedure') = 1
     AND definition LIKE '%Foo%'
     
-    
+-- Latest modified stored procedure
+SELECT * FROM sys.procedures order by modify_date desc
