@@ -5,3 +5,20 @@ SELECT OBJECT_NAME(object_id) FROM sys.sql_modules
     
 -- Latest modified stored procedure
 SELECT * FROM sys.procedures order by modify_date desc
+
+
+-- Get range of dates from two dates
+DECLARE @startDate DATETIME
+DECLARE @endDate DATETIME
+SET @startDate = '2013-03-01'
+SET @endDate = '2013-12-01';
+WITH dates(Date) AS 
+(
+    SELECT @startdate as Date
+    UNION ALL
+    SELECT DATEADD(m,1,[Date])
+    FROM dates 
+    WHERE DATE < @enddate
+)
+SELECT Date FROM dates
+
