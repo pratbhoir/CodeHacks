@@ -1,0 +1,26 @@
+DECLARE @Numbers int
+DECLARE @Upper int
+DECLARE @Lower int
+
+SET @Numbers = 1000
+SET @Upper = 4000
+SET @Lower = 0;
+
+WITH RandomNumbers (RowNumber, RandomNumber) AS (
+    -- Anchor member definition
+    SELECT  1                         AS RowNumber, 
+            RAND( CHECKSUM( NEWID())) AS RandomNumber
+    UNION ALL
+    -- Recursive member definition
+    SELECT  rn.RowNumber + 1          AS RowNumber, 
+            RAND( CHECKSUM( NEWID())) AS RandomNumber
+    FROM RandomNumbers rn
+    WHERE rn.RowNumber < @Numbers
+)
+
+-- Statement that executes the CTE
+SELECT  rn.RowNumber                     AS RowNumber,
+        ROUND(rn.RandomNumber * @Upper, @Lower) AS RoundedRandomNumber
+FROM RandomNumbers rn
+option (maxrecursion 1000);
+GO
