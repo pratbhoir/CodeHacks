@@ -1,0 +1,33 @@
+
+
+-- IN CSHTML FILE
+<script type="text/javascript">
+    $(document).ready(function () {
+        AjaxSetup();
+        var initObject = {
+            //SearchPushToChangeLocationURL: '@Url.Action("ChangeInventoryLocation", "InventoryAllocation")',
+            GetBarcodeDropdownsURL: '@Url.Action("GetBarcodeDropdowns", "Barcode")',
+            SearchInventoryTagSearchURL: '@Url.Action("InventoryTagSearch", "Barcode")',
+            GenerateBarcodePdfURL: '@Url.Action("GenerateBarcode", "Barcode")'
+        };
+        InventoryBarcodeInitFunc(initObject);
+        RefreshPage();
+        POAutoComplete();
+        GRNAutoComplete();
+        ITEMAutoComplete();
+        TAGNOAutoComplete();
+        SERIALNOAutoComplete();
+    }); 
+</script>
+
+//In JS FILE
+function InventoryBarcodeInitFunc(object) {
+    SearchInventoryTagSearchURL = object.SearchInventoryTagSearchURL;
+    GenerateBarcodePdfURL = object.GenerateBarcodePdfURL;
+    GetBarcodeDropdownsURL = object.GetBarcodeDropdownsURL;
+    RedirectUrl = object.RedirectUrl;
+    errorInventoryFlag = [];
+    _RFQVendorList = [];
+    VendorAutoComplete("txtMPOSearch");
+}
+
