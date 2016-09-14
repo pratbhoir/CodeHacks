@@ -1,0 +1,49 @@
+
+--EXEC [USP_P2P_BARCODE_DETAILS_GET] 2, '<NewDataSet><from_date>01 jan 2016</from_date><to_date>01 jan 2016</to_date><po_no></po_no></NewDataSet>'
+
+CREATE PROCEDURE [dbo].[USP_DETAILS_GET]
+(        
+	@USER_ID INT,         
+	@ParamXML XML        
+)        
+AS        
+BEGIN       
+	DECLARE @I INT ,@FROMDATE DATETIME,@TODATE DATETIME
+	EXEC sp_xml_preparedocument @I OUTPUT, @ParamXML;        
+    
+    --Fetching Data from XML into temp Table
+ 	SELECT *   
+ 	INTO #TBL_BARCODE
+ 	FROM OPENXML(@I,'NewDataSet',2)      
+ 	WITH      
+ 	(      
+ 		from_date VARCHAR(50),
+        to_date VARCHAR(50),
+        po_no  VARCHAR(50)
+ 	)      
+ 	EXEC sp_xml_removedocument @I     
+   
+   -- SELECT * FROM #TBL_BARCODE
+   
+   --Seting data to the variables from temp table
+  	SELECT @FROMDATE = ISNULL(FROM_DATE,''),@TODATE = ISNULL(TO_DATE,'')
+  	FROM #TBL_BARCODE     
+  	
+  	IF(ISNULL(@FROMDATE,'') = '' OR @FROMDATE= 0)
+  	BEGIN
+  		SET @FROMDATE = NULL
+  	END
+  	
+  	IF(ISNULL(@TODATE,'') = '' OR @TODATE= 0)
+  	BEGIN
+  		SET @TODATE = NULL
+  	END
+  	
+  	--Using the data to further details
+  	SELECT * FROM tbl_Test WHERE
+  	CONVERT(DATETIME,CONVERT(VARCHAR(8),CREATED_DATE ,112)) >= CONVERT(DATETIME,ISNULL(@FROMDATE,REPLACE(CONVERT(VARCHAR,CREATED_DATE,106),' ','-')),108)
+	AND CONVERT(DATETIME,CONVERT(VARCHAR(8),CREATED_DATE ,112)) <= CONVERT(DATETIME,ISNULL(@TODATE,REPLACE(CONVERT(VARCHAR,CREATED_DATE,106),' ','-')),108)		
+  	
+END     
+
+
