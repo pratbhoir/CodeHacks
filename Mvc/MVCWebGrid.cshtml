@@ -1,0 +1,68 @@
+@model P2PLibrary.Models.BarcodeModel
+@{
+    ViewBag.Title = "Inventory Barcode Generation";
+
+    var gridInventory = new WebGrid(Model.LSTBARCODETAGDETAILS, canPage: true, canSort: false, rowsPerPage: 25, ajaxUpdateContainerId: "INVENTORY_TAG_DETAILS");
+    gridInventory.Pager(WebGridPagerModes.All);  
+}
+
+<style type="text/css">     
+
+.NoRecords
+{
+    font-size: 20px;
+    text-align: center;
+    margin: 50px;
+    padding: 20px;
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+}
+
+</style>
+
+<div id="INVENTORY_TAG_DETAILS">
+    @if (Model.LSTBARCODETAGDETAILS != null && Model.LSTBARCODETAGDETAILS.Count > 0)
+    {   
+        <div>
+            @MvcHtmlString.Create(gridInventory.GetHtml(
+                tableStyle: "table table-bordered table-striped",
+                headerStyle: "bgTeal",
+                rowStyle: "clsChangeLocation",
+                alternatingRowStyle: "clsChangeLocation",
+                footerStyle: "text-right",
+                htmlAttributes: new { id = "grdInventoryChangeLocation_Grid" },
+                mode: WebGridPagerModes.All,
+                firstText: "<< First",
+                previousText: "< Prev",
+                nextText: "Next >",
+                lastText: "Last >>",
+                columns: new[] {
+                //gridInventoryAllocationDetails.Column("ITEM_ID", "ITEM ID", style: "gridColumn"), 
+                 gridInventory.Column(
+                                        format: @<text>
+                                    <input type="checkbox" value="@item.INVENTORY_ID" name="ids" class="clsInventorylocchk" /><input type="hidden" value="@item.INVENTORY_ID"  class="CLS_INV_ID" />
+                                    </text>,
+                                        header: "{checkall}"
+                                    ),
+                gridInventory.Column("PO_NO", "PO No", style: "gridColumn"), 
+                gridInventory.Column("GRN_NO", "GRN No", style: "gridColumn"),
+                gridInventory.Column("ITEM_NAME", "Item Name", style: "gridColumn"),
+                gridInventory.Column("TAG_NO", "TAG No", style: "gridColumn CLS_TAG_NO"),
+                gridInventory.Column("SERIAL_NO", "Serial No", style: "gridColumn CLS_SERIAL_NO"),
+             }).ToString().Replace("{checkall}", "<input type='checkbox' class='clsInventoryAllCheck'  onchange='CheckInvAllItemChangeLoc(this)'/>"))
+        </div>                                                                                                                                       
+        <div class="row">
+            <div class="col-xs-4 text-left">
+                <button class="btn btn-primary" id="btnGenerateBarcode" onclick="GenerateBarcode()">
+                    Generate Barcode
+                </button>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="NoRecords">
+            No records to display.
+        </div>
+    }
+</div>
