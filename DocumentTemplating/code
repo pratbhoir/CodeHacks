@@ -1,0 +1,14 @@
+Install-Package FreeSpire.Doc
+
+Document sourceDoc = new Document(strReportFileName);
+                     Document destinationDoc = new Document("\\\\10.172.0.100\\p2p\\PDFDocuments\\PO\\Po318.doc");
+                     foreach (Section sec in sourceDoc.Sections)
+                     {
+                         foreach (DocumentObject obj in
+sec.Body.ChildObjects)
+                         {
+destinationDoc.Sections[0].Body.ChildObjects.Add(obj.Clone());
+                         }
+                     }
+destinationDoc.SaveToFile("\\\\10.172.0.100\\p2p\\PDFDocuments\\PO\\Po318.doc");
+
