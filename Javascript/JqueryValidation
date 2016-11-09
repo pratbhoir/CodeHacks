@@ -1,0 +1,9 @@
+
+function loadValidator() {
+
+    var form = $("form")//$("#main_div").closest("form");
+    form.removeData('validator');
+    form.removeData('unobtrusiveValidation');
+    $.validator.unobtrusive.parse(form);
+    form.valid();
+}
