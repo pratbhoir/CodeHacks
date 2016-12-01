@@ -1,0 +1,49 @@
+---Splitting logic into limited rocrds
+SELECT ROW_NUMBER() OVER (Order by Id) AS SrID,* INTO #ControlTable FROM tblDemo
+--SELECT * FROM #ControlTable
+
+CREATE TABLE #TEMP_BUCKET
+(
+	SrID int,
+	Id int,
+	Amount numeric(18,2),
+	GroupID int
+)
+
+
+declare @SrID int,@GroupCount int,@GroupID int, @Limit int,@Amount numeric(18,2)
+
+SET @GroupCount=0;
+SET @Limit = 50000;
+
+while exists (select * from #ControlTable)
+begin
+    select top 1 @SrID = SrID,@Amount=Amount
+    from #ControlTable order by SrID asc
+	
+	SET @GroupID = -1
+	SELECT TOP 1 @GroupID = GroupID FROM #TEMP_BUCKET
+	GROUP BY GroupID HAVING (SUM(Amount)+@AMOUNT)<@LIMIT ORDER BY GroupID ASC
+	IF(@GroupID=-1)
+	BEGIN
+		SET @GroupCount = @GroupCount+1;
+		SET @GroupID = @GroupCount;
+	END
+
+	INSERT INTO #TEMP_BUCKET
+	SELECT SrID,Id,Amount,@GroupID FROM #ControlTable WHERE SrID = @SrID
+
+    -- Do something with your TableID
+    delete #ControlTable
+    where SrID = @SrID
+
+end
+
+SELECT * FROM #TEMP_BUCKET
+
+DROP TABLE #ControlTable
+DROP TABLE #TEMP_BUCKET
+
+
+
+
