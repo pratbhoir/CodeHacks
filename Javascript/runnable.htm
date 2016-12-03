@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+  <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+</head>
+<body>
+  <style>
+  #divCount{
+    margin:50px;
+    font-size:75px;
+    font-style:bold;
+  }
+  </style>
+  
+  <script>
+    
+	var url = "https://www.youtube.com/watch?v=ez3KGceRvh8"
+	var openCount = 0;
+	function openLink(){
+	  openCount = openCount + 1;
+	  $("#divCount").html(openCount);
+	  console.log("Open Link");
+	  var myWindow = window.open(url);
+	  setTimeout( function(){ 
+		myWindow.close();
+	  }  , 8000 );
+	  
+	}
+
+	function doFoo(){
+	  console.log("foo");
+	}
+
+	function myTimeoutFunction()
+	{
+		openLink();
+	}
+    
+    function startFoo(){
+      myTimeoutFunction();
+      repeatFoo = setInterval(myTimeoutFunction, 10000);
+    }
+
+	function stopFoo(){
+	  clearInterval(repeatFoo);
+	}
+
+  </script>
+  
+  
+  
+  <button onClick="openLink()">Open Link</button>
+  
+  <br><br>
+  <button onClick="startFoo()">Start FUnction</button>
+  <br><br>
+  <button onClick="stopFoo()">Stop FUnction</button>
+  
+
+  <div id="divCount">
+    0
+  </div>
+  
+</body>
+</html>
