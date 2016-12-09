@@ -1,4 +1,25 @@
 
+------------------------- JAVASCRIPT CODE--------------------------------------------------
+
+function downloadChallan() {
+
+    if (!$('#frmTDSChallanFilter').valid()) {
+        return;
+    }
+
+    var Entity = "";// $("#Entity").val();
+    var Period = $("#Period").val();
+    var PartialViewName = "_TDSChallanList";
+    console.log({ Entity: Entity, Period: Period, PartialViewName: PartialViewName });
+
+    var downloadUrl = DownloadChallanURL + "?Entity=" + Entity + "&Period=" + Period;
+    window.location = downloadUrl;
+
+}
+
+
+------------------------- ACTION CODE--------------------------------------------------
+
         public ActionResult DownloadErrorFile(string id)
         {
             try
