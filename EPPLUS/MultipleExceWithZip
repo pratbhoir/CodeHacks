@@ -1,0 +1,56 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using System.IO;
+using OfficeOpenXml;
+using Ionic.Zip;
+
+namespace MvcApp.Controllers
+{
+    public class EpplusController : Controller
+    {
+        // GET: Epplus
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        public ActionResult Download()
+        {
+            using (ZipFile zipFile = new ZipFile())
+            {
+                zipFile.AlternateEncodingUsage = ZipOption.AsNecessary;
+                ////Adding Directory to Archive
+                //zipFile.AddDirectoryByName("Files");
+                //zipFile.AddFile("text.txt", "Files");
+
+                for (int i = 1; i < 4; i++)
+                {
+                    string fileName = "text" + i + ".xlsx";
+                    using (ExcelPackage pck = new ExcelPackage())
+                    {
+                        var workSheet = pck.Workbook.Worksheets.Add("Sheet1");
+                        workSheet.Cells["A1"].Value = "Test";
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            pck.SaveAs(memoryStream);
+                            ZipEntry e = zipFile.AddEntry(fileName, memoryStream.ToArray());
+                        }
+                    }
+                }
+
+                Response.Clear();
+                Response.BufferOutput = false;
+                string zipName = String.Format("Zip_{0}.zip", DateTime.Now.ToString("yyyy-MMM-dd-HHmmss"));
+                Response.ContentType = "application/zip";
+                Response.AddHeader("content-disposition", "attachment; filename=" + zipName);
+                zipFile.Save(Response.OutputStream);
+                Response.End();
+            }
+            return Content("");
+        }
+
+    }
+}
