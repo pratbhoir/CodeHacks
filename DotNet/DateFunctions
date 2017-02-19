@@ -1,0 +1,22 @@
+
+
+public static string ConvertDateToMMDDYYYY(string DDMMYYY)
+        {
+            try
+            {
+				string result="";
+				string[] arr = DDMMYYY.Split(new char[]{'-','/','\\'});
+				
+				result =  arr[1]+"-"+arr[0]+"-"+arr[2];
+											 
+				return result;
+            }
+            catch (Exception)
+            {
+                return DDMMYYY;
+            }
+        }
+        
+        
+        
+        
