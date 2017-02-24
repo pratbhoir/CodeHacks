@@ -1,0 +1,5 @@
+
+-- DD/mm/yyyy
+SELECT CONVERT(varchar(10),Getdate(),103)
+
+
