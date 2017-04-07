@@ -53,5 +53,18 @@ GROUP BY
 ORDER BY 
     object_name(i.object_id) 
     
-    
+-- Active Command (sessions) check in ms sql    
+SELECT sqltext.TEXT,
+DB_NAME(database_id) [Database],
+req.session_id,
+req.status,
+req.command,
+req.cpu_time,
+req.total_elapsed_time,
+req.*
+FROM sys.dm_exec_requests req
+CROSS APPLY sys.dm_exec_sql_text(sql_handle) AS sqltext
+where req.session_id=210
+order by req.total_elapsed_time desc
+
     
