@@ -1,0 +1,22 @@
+
+
+Link: http://www.c-sharpcorner.com/blogs/protecting-excel-files-programmatically
+
+    Workbook workbook = new Workbook();
+    workbook.LoadFromFile(objUpload.FilePath);
+    //protect specified worksheet  
+    //workbook.Worksheets["COI as per Tax team"].Unprotect(strPassword);
+
+    Worksheet sheet = workbook.Worksheets["COI as per Tax team"];
+    sheet.Unprotect(strPassword);
+    sheet.Range["C1"].Text = "'";
+
+    if (objUpload.FilePath.Contains(".xlsx"))
+    {
+        workbook.SaveToFile(objUpload.FilePath, ExcelVersion.Version2007);
+    }
+    else
+    {
+        workbook.SaveToFile(objUpload.FilePath, ExcelVersion.Version97to2003);
+    }
+     
