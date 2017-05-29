@@ -1,0 +1,92 @@
+Link: http://www.c-sharpcorner.com/UploadFile/bd8b0b/how-to-implement-captcha-in-Asp-Net-mvc/
+
+----- Model -------------
+public class LoginModel  
+    {  
+        public int UserName { get; set; }  
+        public string Password { get; set; }  
+    }  
+
+------- COntorller------------------
+using System.Web.Mvc;  
+using CaptchaMvc.HtmlHelpers;  
+  
+  
+public ActionResult Index()  
+        {  
+            return View();  
+        }  
+  
+        [HttpPost]  
+        public ActionResult Index(string empty)  
+        {  
+            // Code for validating the CAPTCHA  
+            if (this.IsCaptchaValid("Captcha is not valid"))  
+            {  
+                 
+                return RedirectToAction("ThankYouPage");   
+            }  
+  
+            ViewBag.ErrMessage = "Error: captcha is not valid.";  
+            return View();  
+        }  
+  
+        public ActionResult ThankYouPage()   
+        {  
+            return View();  
+        }  
+        
+        
+   ------------- View -----------------
+   
+@using CaptchaMvc.HtmlHelpers  
+@using MVCCaptcha;  
+@using CaptchaMvc;  
+  
+@model MVCCaptcha.Models.LoginModel  
+  
+@{  
+    ViewBag.Title = "Index";  
+}  
+  
+@using (Html.BeginForm()) {  
+    @Html.ValidationSummary(true)  
+  
+    <fieldset>  
+        <legend>Feedback</legend>  
+  
+        <div class="editor-label">  
+            @Html.LabelFor(model => model.UserName)  
+        </div>  
+        <div class="editor-field">  
+            @Html.EditorFor(model => model.UserName)  
+            @Html.ValidationMessageFor(model => model.UserName)  
+        </div>  
+  
+        <div class="editor-label">  
+            @Html.LabelFor(model => model.Password)  
+        </div>  
+        <div class="editor-field">  
+            @Html.TextAreaFor(model => model.Password)  
+            @Html.ValidationMessageFor(model => model.Password)  
+        </div>  
+     
+        @Html.MathCaptcha()  
+  
+        @*@Html.Captcha(3)*@  
+         <br />  
+        <p class="Error">  @ViewBag.ErrMessage </p>  
+        <p>  
+            <input type="submit" value="Send" />  
+        </p>  
+    </fieldset>  
+}  
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#CaptchaInputText").attr('placeholder', 'Captcha');
+        $("#divCaptcha br").get(4).remove();
+    });
+
+</script>
