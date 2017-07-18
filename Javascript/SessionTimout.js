@@ -1,9 +1,10 @@
 
-var TimeTicker = (function () {
+var SessionTimeoutTimeTicker = (function () {
 
     var timeInterval = "";
 
     var timeTickerModel = {
+        totalTicks: 100,
         ticks: 100,
         notifyBefore: 0,
         viewMode: 'MI',
@@ -13,6 +14,7 @@ var TimeTicker = (function () {
     }
 
     function setupTimeTicker(obj) {
+        timeTickerModel.totalTicks = obj.ticks || 0;
         timeTickerModel.ticks = obj.ticks || 0;
         timeTickerModel.notifyBefore = obj.notifyBefore || 0;
         timeTickerModel.viewMode = obj.viewMode || 'MI';
@@ -21,6 +23,7 @@ var TimeTicker = (function () {
         timeTickerModel.onComplete = obj.onComplete || function () { };
         timeTickerModel.onNotify = obj.onNotify || function () { };
         displayTicks();
+        localStorage.SessionTimeoutResetTime = new Date();
         startTimeTicker();
     }
 
@@ -33,16 +36,35 @@ var TimeTicker = (function () {
         clearInterval(timeInterval);
     }
 
+    function resetTimeTicker() {
+        clearInterval(timeInterval);
+        timeTickerModel.ticks = timeTickerModel.totalTicks;
+        timeInterval = setInterval(tickTime, 1000);
+    }
+
     function tickTime() {
+        // If session is resetted within 1 sec the reset the session
+        if ((Math.abs(new Date(localStorage.SessionTimeoutResetTime) - new Date()) / 1000) < 2) {
+            //resetTimeTicker();
+            timeTickerModel.ticks = timeTickerModel.totalTicks;
+            return;
+        }
         if (timeTickerModel.ticks > 0) {
             timeTickerModel.ticks = timeTickerModel.ticks - 1;
+            if (timeTickerModel.ticks > timeTickerModel.notifyBefore) {
+                //Close Notify
+                CloseConfirmDialog();
+                CloseShowMsg();
+            }
             if (timeTickerModel.ticks == timeTickerModel.notifyBefore) {
                 timeTickerModel.onNotify();
             }
+            if (timeTickerModel.ticks == 0) {
+                timeTickerModel.onComplete();
+            }
         }
         else {
-            stopTimeTicker();
-            timeTickerModel.onComplete();
+            //stopTimeTicker();
         }
         displayTicks();
     }
@@ -110,7 +132,8 @@ var TimeTicker = (function () {
     return {
         init: setupTimeTicker,
         start: startTimeTicker,
-        stop: stopTimeTicker
+        stop: stopTimeTicker,
+        reset: resetTimeTicker
     }
 
 
@@ -118,7 +141,7 @@ var TimeTicker = (function () {
 
 
 function ShowSessionTimeoutWarning() {
-    ShowConfirmDialog("Time left for session to expire: <span class='clsSessionTimeout'></span> <br><br> Click Confirm to continue your session.", "Session Expiration Warning");
+    ShowConfirmDialog("Time left for session to expire: <b><span class='clsSessionTimeout'></span></b> <br><br> Click Confirm to continue your session.", "Session Expiration Warning");
     $("#btnConfirmProceed").off("click").on("click", function () {
         $.get(AppModel.SessionResetURL);
         CloseConfirmDialog();
@@ -133,16 +156,17 @@ function ShowSessionTimeoutComplete() {
 }
 
 function resetSessionTimer() {
-    var sessionTimeout = 10 * 60;
-    var sessionTimeoutNotify = 9 * 60;
-    TimeTicker.init({ ticks: sessionTimeout, notifyBefore: sessionTimeoutNotify, viewMode: 'MM', onComplete: ShowSessionTimeoutComplete, onNotify: ShowSessionTimeoutWarning });
+    var sessionTimeout = 20;
+    var sessionTimeoutNotify = 5;
+    SessionTimeoutTimeTicker.init({ ticks: sessionTimeout, notifyBefore: sessionTimeoutNotify, viewMode: 'MM', onComplete: ShowSessionTimeoutComplete, onNotify: ShowSessionTimeoutWarning });
 }
 
-
+//Resseting session while ajax complete
 $(document).ajaxComplete(function () {
     resetSessionTimer();
 });
 
+//Resseting session while Refresh complete
 $(document).ready(function () {
     resetSessionTimer();
 });
