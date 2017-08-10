@@ -1,0 +1,32 @@
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.9.1.js"></script>
+
+<div class="a">aaaaaaaa</div>
+<div class="a">yellow</div>
+<div class="a">blue</div>
+
+
+<script type="text/javascript">
+
+    (function ($) {
+        $.fn.foozy = function (options) {
+
+            var settings = $.extend({
+                color: "grey",
+                isUnderline: "true"
+            }, options);
+
+            this.each(function () {
+                var temp = $(this).text();
+                $(this).css("color", settings.color);
+                $(this).css("color", temp);
+                if (settings.isUnderline) {
+                    $(this).css("text-decoration", "underline");
+                }
+            });
+            return this;
+        }
+    } (jQuery));
+
+    $(".a").foozy({ color: "red", isUnderline: false })
+  
+</script>
