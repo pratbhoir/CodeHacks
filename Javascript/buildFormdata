@@ -1,0 +1,32 @@
+
+function buildFormdata(data, formData, name) {
+    formData = formData || new FormData();
+    name = name || '';
+    if (typeof data === 'object') {
+        Object.keys(data).forEach(function (key) {
+            if (name == '') {
+                appendFormdata(data[key], formData, key);
+            } else {
+                appendFormdata(data[key], formData, name + '[' + key + ']');
+            }
+        });
+
+    } else {
+        formData.append(name, data);
+    }
+    return formData;
+}
+
+
+var formData = new FormData(),
+    your_object = {
+        name: 'test object',
+        another_object: {
+            name: 'and other objects',
+            value: 'whatever'
+        }
+    };
+//var test = appendFormdata(your_object,formData);
+var test = buildFormdata(your_object);
+console.log(test);
+
