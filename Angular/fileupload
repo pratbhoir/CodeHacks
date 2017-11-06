@@ -1,0 +1,155 @@
+http://www.c-sharpcorner.com/article/angular-2-file-upload-using-web-api/
+
+
+//Here is my file upload web api code.
+
+using System.Net.Http;  
+using System.Web;  
+using System.Web.Http;  
+namespace FileUpload_WebAPI_Angular2.Controllers  
+{  
+    public class UploadFileApiController : ApiController  
+    {  
+        [HttpPost]  
+        public HttpResponseMessage UploadJsonFile()  
+        {  
+            HttpResponseMessage response = new HttpResponseMessage();  
+            var httpRequest = HttpContext.Current.Request;  
+            if (httpRequest.Files.Count > 0)  
+            {  
+                foreach (string file in httpRequest.Files)  
+                {  
+                var postedFile = httpRequest.Files[file];  
+                var filePath = HttpContext.Current.Server.MapPath("~/UploadFile/" + postedFile.FileName);  
+                postedFile.SaveAs(filePath);  
+                }  
+            }  
+        return response;  
+        }  
+    }  
+}  
+
+
+/////Here is my component code:
+
+import { Component } from '@angular/core';  
+import { Http, RequestOptions, Headers, Response } from '@angular/http';  
+import { Observable } from 'rxjs/Rx';  
+@Component({  
+    selector: 'my-app',  
+    templateUrl: './app/app.component.html',  
+    styleUrls: ['./app/styles/styles.css']  
+})  
+export class AppComponent {  
+    private isUploadBtn: boolean = true;  
+    constructor(private http: Http) {  
+    }  
+    //file upload event  
+    fileChange(event) {  
+        debugger;  
+        let fileList: FileList = event.target.files;  
+        if (fileList.length > 0) {  
+            let file: File = fileList[0];  
+            let formData: FormData = new FormData();  
+            formData.append('uploadFile', file, file.name);  
+            let headers = new Headers()  
+            //headers.append('Content-Type', 'json');  
+            //headers.append('Accept', 'application/json');  
+            let options = new RequestOptions({ headers: headers });  
+            let apiUrl1 = "/api/UploadFileApi";  
+            this.http.post(apiUrl1, formData, options)  
+            .map(res => res.json())  
+            .catch(error => Observable.throw(error))  
+            .subscribe(  
+            data => console.log('success'),  
+            error => console.log(error)  
+            )  
+        }  
+        window.location.reload();  
+    }  
+}  
+
+
+///Here is my HTML
+
+<h2>Upload Files Sample</h2>  
+<div class="fileUpload btn btn-primary" *ngIf="isUploadBtn">  
+    <span>Upload</span>  
+    <input type="file" id="btnUpload" value="Upload" (change)="fileChange($event)" class="upload" />  
+</div>  
+<style>  
+#pgnumber {  
+    display: none !important;  
+}  
+.fileUpload {  
+    position: relative;  
+    overflow: hidden;  
+    margin: 10px;  
+}  
+.fileUpload input.upload {  
+    position: absolute;  
+    top: 0;  
+    right: 0;  
+    margin: 0;  
+    padding: 0;  
+    font-size: 20px;  
+    cursor: pointer;  
+    opacity: 0;  
+    filter: alpha(opacity=0);  
+}  
+</style>  
+
+////Add component reference in app.module
+
+import { NgModule } from '@angular/core';  
+import { BrowserModule } from '@angular/platform-browser';  
+import { FormsModule } from '@angular/forms';  
+import { HttpModule } from '@angular/http';  
+import { AppComponent } from './app.component';  
+import { CommonModule, APP_BASE_HREF, LocationStrategy, HashLocationStrategy } from '@angular/common';  
+@NgModule({  
+    imports: [BrowserModule, CommonModule, FormsModule, HttpModule],  
+    declarations: [AppComponent],  
+    providers: [{ provide: LocationStrategy, useClass: HashLocationStrategy }],  
+    bootstrap: [AppComponent]  
+})  
+export class AppModule { };  
+
+////Now let’s add component name on index.html
+
+<!DOCTYPE html>  
+<html>  
+    <head>  
+        <title></title>  
+        <base href="/">  
+        <meta charset="utf-8" />  
+        <meta name="viewport" content="width=device-width, initial-scale=1">  
+        <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />  
+        <link href="app/styles/styles.css" rel="stylesheet" />  
+        <!-- Polyfill(s) for older browsers -->  
+        <script src="node_modules/core-js/client/shim.min.js"></script>  
+        <script src="node_modules/zone.js/dist/zone.js"></script>  
+        <script src="node_modules/reflect-metadata/Reflect.js"></script>  
+        <script src="node_modules/systemjs/dist/system.src.js"></script>  
+        <!-- Configure SystemJS -->  
+        <script src="systemjs.config.js"></script>  
+        <script>  
+            System.import('app').catch(  
+            function (err)  
+            { console.error(err); });  
+        </script>  
+    </head>  
+    <body>  
+        <header class="navbar navbar-inner navbar-fixed-top">  
+            <nav class="container">  
+                <div class="navbar-header">  
+                    <span class="app-title">Upload File Sample in Angular 2</span>  
+                </div>      
+            </nav>  
+        </header>  
+        <main class="container">  
+            <my-app>Loading...</my-app>  
+        </main>  
+    </body>  
+</html>  
+
