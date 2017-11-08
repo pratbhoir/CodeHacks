@@ -1,0 +1,119 @@
+// 1)  Create file Model
+public class FileModel
+    {
+        public string Name { get; set; }
+        public string ContentType { get; set; }
+        public string FileContent { get; set; }
+
+        public FileModel()
+        {
+            Name = string.Empty;
+            ContentType = string.Empty;
+            FileContent = string.Empty;
+        }
+
+        public FileModel(string Name, string ContentType, System.IO.MemoryStream memStream)
+        {
+            this.Name = Name.Trim();
+            this.ContentType = ContentType.Trim();
+            FileContent = FileModel.GenerateFileToBase64(memStream);
+        }
+
+        public static string GenerateFileToBase64(System.IO.MemoryStream memStream)
+        {
+            System.IO.MemoryStream ms = new System.IO.MemoryStream();
+            byte[] fileByte = memStream.ToArray();
+            var SigBase64 = Convert.ToBase64String(fileByte);
+            return SigBase64;
+        }
+
+    }
+    
+//2 Add API Method
+
+      [HttpGet]
+        public FileModel GetExportPdf()
+        {
+            try
+            {
+                var path = HttpContext.Current.Server.MapPath("/uploads/");
+                var fullpath = Path.Combine(path, "test.pdf");
+
+                GetDummyLogin();
+
+                var memStream = new MemoryStream(File.ReadAllBytes(fullpath));
+
+                FileModel fileModel = new FileModel("test.pdf", "application/pdf", memStream);
+                return fileModel;
+            }
+            catch (Exception ex)
+            {
+                throw ex;//  return RedirectToAction(CommonConstants.ErrorOccuredAction, CommonConstants.HomeController, new { ErrorMessage = ex.Message });
+            }
+        }
+        
+        
+        [HttpGet]
+        public FileModel GetExportExcel()
+        {
+            try
+            {
+                GetDummyLogin();
+
+                using (ExcelPackage pck = new ExcelPackage())
+                {
+                    var workSheet = pck.Workbook.Worksheets.Add("Sheet1");
+
+                    //workSheet.Cells[1, 1].LoadFromDataTable(ObjReportModel.ReportResult.Tables[0], true);
+                    workSheet.Cells[1, 1].Value = "Test1";
+                    workSheet.Cells["B1"].Value = "Test2";
+
+                    var fileStream = new MemoryStream();
+                    pck.SaveAs(fileStream);
+
+                    // Downloading FIle
+                    string fileName = "test.xlsx";
+                    var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+                    FileModel fileModel = new FileModel(fileName,contentType,fileStream);
+                    return fileModel;
+                }
+                //return PartialView(PartialViewName, ObjReportModel);
+            }
+            catch (Exception ex)
+            {
+                throw ex;//  return RedirectToAction(CommonConstants.ErrorOccuredAction, CommonConstants.HomeController, new { ErrorMessage = ex.Message });
+            }
+        }
+    
+    //3) Create Javascript function
+    
+function downloadFileModel(fileModel) {
+      var data,filename,contentType;
+      data = fileModel.FileContent;
+      filename = fileModel.Name;
+      contentType = fileModel.ContentType;
+
+      var urlData = 'data:'+contentType+';base64,' + data;
+      var element = document.createElement('a');
+      element.setAttribute('href', urlData);
+      element.setAttribute('download', filename);
+
+      element.style.display = 'none';
+      document.body.appendChild(element);
+
+      element.click();
+
+      document.body.removeChild(element);
+}
+    
+    
+  //4) get the http response and pass to javascript function
+  
+    downloadFileExcel(){
+    this.profileService.downloadFileExcel().subscribe((response)=>{
+      downloadFileModel(response);
+    });
+  }
+
+    
