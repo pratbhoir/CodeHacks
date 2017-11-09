@@ -1,1 +1,43 @@
-https://scotch.io/tutorials/how-to-implement-a-custom-validator-directive-confirm-password-in-angular-2
+// https://scotch.io/tutorials/how-to-implement-a-custom-validator-directive-confirm-password-in-angular-2
+
+
+import { Directive, forwardRef, Attribute } from '@angular/core';
+import { Validator, AbstractControl, NG_VALIDATORS } from '@angular/forms';
+
+@Directive({
+  selector: '[appForbidden][ngModel]',
+  providers: [
+    { provide: NG_VALIDATORS, useExisting: forwardRef(() => ForbiddenDirective), multi: true }
+]
+})
+export class ForbiddenDirective implements Validator {
+
+  constructor(@Attribute('appForbidden') public  appForbidden:string) { }
+
+  validate(control:AbstractControl):{[key:string]:any}{
+    //self value
+    let value =control.value;
+    //getting attribute value from validateAttribute
+    let attributeValue = this.appForbidden;
+    //getting control from  attribute value from validateAttribute
+    //let e = control.root.get(this.appForbidden);
+
+    if(value && value==attributeValue) return{
+      appForbidden:true
+    }
+    return null;
+  }
+
+}
+
+
+// HTML FILE
+
+<input type="text" class="form-control" id="exampleInputEmail1" placeholder="Name" name="Name" #Name="ngModel" required appForbidden="bob" pattern="^(UPDATE(.)+SET(.)+WHERE)$" [(ngModel)]= tag.Name >
+<div [hidden]="!Name.errors?.required || false">Name is required.</div>
+<div [hidden]="!Name.errors?.minlength || false">Name length.</div>
+<div [hidden]="!Name.errors?.pattern || false">Invalid Email.</div>
+<div [hidden]="!Name.errors?.appForbidden || false">Bob Not allowed!</div>
+<pre *ngIf="Name.errors">{{Name.errors | json }}</pre>
+
+
