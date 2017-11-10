@@ -69,6 +69,48 @@ Service
   }
 
 
+WebAPI
+
+
+
+        [HttpPost]
+        public ResponseMessage SaveProfileDetails()
+        {
+            try
+            {
+                string UserName = HttpContext.Current.Request.Params["UserName"];
+
+                ResponseMessage objResponse = new ResponseMessage();
+                var httpRequest = HttpContext.Current.Request;
+                var foo = httpRequest.Form.ToString();
+                var temp = HttpUtility.ParseQueryString(foo);
+
+                //var requestJson =  result.Contents[0].ReadAsString();
+                //var request = JsonConvert.DeserializeObject<ProfileModel>(requestJson);
+
+                if (httpRequest.Files.Count > 0)
+                {
+                    foreach (string file in httpRequest.Files)
+                    {
+                        var postedFile = httpRequest.Files[file];
+                        var filePath = HttpContext.Current.Server.MapPath("~/UploadFile/" + postedFile.FileName);
+                        postedFile.SaveAs(filePath);
+                    }
+                }
+
+                //Objlogin = (LoginModel)SA.GetSession("Login");
+                //GetDummyLogin();
+                //var xmlDoc = Utilities.GetXmlDocument(ObjProfileModel);
+                //ResponseMessage objResponse = ObjProfileModel.SaveProfileDetails(xmlDoc, Objlogin);
+                return objResponse;
+            }
+            catch (Exception ex)
+            {
+                throw ex;//  return RedirectToAction(CommonConstants.ErrorOccuredAction, CommonConstants.HomeController, new { ErrorMessage = ex.Message });
+            }
+        }
+
+
 
 
 
