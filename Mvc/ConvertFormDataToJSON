@@ -1,0 +1,24 @@
+ var httpRequest = HttpContext.Current.Request;
+                var queryString = httpRequest.Form.ToString();
+                var requestJson = Utilities.ConvertFormDataToJSON(queryString);
+
+                //var requestJson = result.Contents[0].ReadAsString();
+                var ObjProfileModel = JsonConvert.DeserializeObject<ProfileModel>(requestJson);
+
+
+
+ public static string ConvertFormDataToJSON(string queryString)
+        {
+            try
+            {
+                var temp = HttpUtility.ParseQueryString(queryString);
+                var requestJson = new JavaScriptSerializer().Serialize(
+                    temp.AllKeys.ToDictionary(k => k, k => temp[k])
+                );
+                return requestJson;
+            }
+            catch (Exception)
+            {
+                return "";
+            }
+        }
