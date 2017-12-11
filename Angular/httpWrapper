@@ -1,0 +1,112 @@
+import { Injectable } from '@angular/core';
+import { Http, Headers, Response, Request, BaseRequestOptions, RequestMethod } from '@angular/http';
+import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { API_BASE, AUTH_TOKEN_LS_KEY, CLIENT_ID, CLIENT_PASS, LOCAL_STORAGE_USER_KEY } from 'config/constants';
+
+@Injectable()
+export class HttpService 
+{
+    token: any;
+
+    constructor(private http: Http, private router: Router) {}
+
+    get(url: string):Observable<Response> {
+        return this.request(API_BASE+url, RequestMethod.Get);
+    }
+
+    post(url:string, body:any):Observable<Response> {
+        return this.request(API_BASE+url, RequestMethod.Post, body);
+    }
+
+    put(url:string, body:any):Observable<Response> {
+        return this.request(API_BASE+url, RequestMethod.Put, body);
+    }
+
+    patch(url:string, body:any):Observable<Response> {
+        return this.request(API_BASE+url, RequestMethod.Patch, body);
+    }
+
+    delete(url: string):Observable<Response> {
+        return this.request(API_BASE+url, RequestMethod.Delete);
+    }
+
+    head(url: string):Observable<Response> {
+        return this.request(API_BASE+url, RequestMethod.Head);
+    }
+
+    options(url: string):Observable<Response> {
+        return this.request(API_BASE+url, RequestMethod.Options);
+    }
+
+    private request(url:string, method:RequestMethod, body?:any):Observable<Response> {
+        let headers = new Headers();
+        this.createBearerTokenHeader(headers);
+        this.createContentTypeHeader(headers);
+
+        let options = new BaseRequestOptions();
+        options.headers = headers;
+        options.url = url;
+        options.method = method;
+        options.body = body;
+
+        let requestOptions = {url: url, method: method, body: body};
+        let request = new Request(options);
+        return this.intercept(this.http.request(request), requestOptions);
+    }
+
+    private intercept(observable: Observable<Response>, requestOptions: any): Observable<Response> {
+        return observable.catch((err, source) => {
+            if( err.status == 401 ) {
+                this.refreshToken().subscribe(result => {
+                    if( result == true ) {
+                        return this.request(requestOptions.url, requestOptions.method, requestOptions.body);
+                    } else {
+                        localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
+                        localStorage.removeItem(AUTH_TOKEN_LS_KEY);
+                        this.router.navigate(['/']);
+                    }
+                });
+
+                return Observable.empty();
+            }
+
+            return Observable.throw(err);
+        });
+    }
+
+    refreshToken(): Observable<boolean> {
+        this.token = JSON.parse(localStorage.getItem(AUTH_TOKEN_LS_KEY));
+        let refreshToken = this.token.refresh;
+        let headers = new Headers();
+        this.createBearerTokenHeader(headers);
+        return this.http.post(API_BASE+'/auth/default/login', {
+                grant_type: "refresh_token",
+                refresh_token: refreshToken,
+                client_id: CLIENT_ID,
+                client_secret: CLIENT_PASS
+            }, 
+            {headers: headers})
+            .map( (response: Response) => {
+                let token = response.json();
+                if( token ) {
+                    this.token = token.access_token;
+                    localStorage.setItem(AUTH_TOKEN_LS_KEY, JSON.stringify({"access":this.token, "refresh":token.refresh_token}));
+                    return true;
+                }
+
+                return false;
+            });
+    }
+
+    private createBearerTokenHeader(headers) {
+        this.token = JSON.parse(localStorage.getItem(AUTH_TOKEN_LS_KEY));
+        if( this.token ) {
+            headers.append('Authorization', 'Bearer ' + this.token.access);
+        }
+    }
+
+    private createContentTypeHeader(headers) {
+        headers.append('Content-Type', 'application/json; charset=utf-8');
+    }
+}
