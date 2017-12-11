@@ -1,3 +1,11 @@
+//https://medium.com/@tkssharma/angular-2-http-request-wrapper-with-loader-7f736e206a4d
+
+//
+
+
+
+
+
 import { Injectable } from '@angular/core';
 import { Http, Headers, Response, Request, BaseRequestOptions, RequestMethod } from '@angular/http';
 import { Router } from '@angular/router';
