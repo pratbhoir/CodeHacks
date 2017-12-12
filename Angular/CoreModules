@@ -1,0 +1,29 @@
+Core Module must contain singelton Services
+Shared Module = > Directive, Guards, Shared Components
+
+
+Creating Service in Different Module
+ng g service core/Services/Logger --module=core/core.module
+
+
+1) import logger service into Respective Component
+import { LoggerService } from '../../core/services/logger.service'
+
+2) instantiate logger service and use it in Respective Component
+  constructor(private logger: LoggerService) {}
+  this.logger.info("Component Iniated");
+  
+3) add coreModule to the app Module and import it
+import {CoreModule} from './core/core.module';
+@NgModule({
+  declarations: [
+    AppComponent,
+  ],
+  imports: [
+    CoreModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
