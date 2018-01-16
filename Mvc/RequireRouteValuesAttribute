@@ -1,0 +1,60 @@
+	
+I have two action methods that are conflicting. Basically, I want to be able to get to the same view using two different routes, either by an item's ID or by the item's name and its parent's (items can have the same name across different parents). A search term can be used to filter the list.
+
+For example...
+
+Items/{action}/ParentName/ItemName
+Items/{action}/1234-4321-1234-4321
+Here are my action methods (there are also Remove action methods)...
+
+// Method #1
+public ActionResult Assign(string parentName, string itemName) { 
+    // Logic to retrieve item's ID here...
+    string itemId = ...;
+    return RedirectToAction("Assign", "Items", new { itemId });
+}
+
+// Method #2
+public ActionResult Assign(string itemId, string searchTerm, int? page) { ... }
+And here are the routes...
+
+routes.MapRoute("AssignRemove",
+                "Items/{action}/{itemId}",
+                new { controller = "Items" }
+                );
+
+routes.MapRoute("AssignRemovePretty",
+                "Items/{action}/{parentName}/{itemName}",
+                new { controller = "Items" }
+                );
+I understand why the error is occurring, since the page parameter can be null, but I can't figure out the best way to resolve it. Is my design poor to begin with? I've thought about extending Method #1's signature to include the search parameters and moving the logic in Method #2 out to a private method they would both call, but I don't believe that will actually resolve the ambiguity.
+
+Any help would be greatly appreciated.
+
+Actual Solution (based on Levi's answer)
+
+I added the following class...
+
+public class RequireRouteValuesAttribute : ActionMethodSelectorAttribute {
+    public RequireRouteValuesAttribute(string[] valueNames) {
+        ValueNames = valueNames;
+    }
+
+    public override bool IsValidForRequest(ControllerContext controllerContext, MethodInfo methodInfo) {
+        bool contains = false;
+        foreach (var value in ValueNames) {
+            contains = controllerContext.RequestContext.RouteData.Values.ContainsKey(value);
+            if (!contains) break;
+        }
+        return contains;
+    }
+
+    public string[] ValueNames { get; private set; }
+}
+And then decorated the action methods...
+
+[RequireRouteValues(new[] { "parentName", "itemName" })]
+public ActionResult Assign(string parentName, string itemName) { ... }
+
+[RequireRouteValues(new[] { "itemId" })]
+public ActionResult Assign(string itemId) { ... }
