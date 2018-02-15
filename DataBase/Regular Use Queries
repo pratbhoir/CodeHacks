@@ -7,6 +7,19 @@ SELECT OBJECT_NAME(object_id) FROM sys.sql_modules
 SELECT * FROM sys.procedures order by modify_date desc
 
 
+
+--- Creating INDEXES
+-a) FOR UNIQUE VALUES
+CREATE NONCLUSTERED INDEX P2P_INDEX_P2P_LOGIN_SESSIONS_TOKEN_ID ON P2P_LOGIN_SESSIONS(TOKEN_ID asc)
+
+-b) WITH MULTIPLE NULLS
+CREATE UNIQUE NONCLUSTERED INDEX idx_yourcolumn_notnull
+ON YourTable(yourcolumn)
+WHERE yourcolumn IS NOT NULL;
+
+
+
+
 -- Get range of dates from two dates
 DECLARE @startDate DATETIME
 DECLARE @endDate DATETIME
