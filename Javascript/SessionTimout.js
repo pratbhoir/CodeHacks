@@ -53,8 +53,8 @@ var SessionTimeoutTimeTicker = (function () {
             timeTickerModel.ticks = timeTickerModel.ticks - 1;
             if (timeTickerModel.ticks > timeTickerModel.notifyBefore) {
                 //Close Notify
-                CloseConfirmDialog();
-                CloseShowMsg();
+//                CloseConfirmDialog();
+//                CloseShowMsg();
             }
             if (timeTickerModel.ticks == timeTickerModel.notifyBefore) {
                 timeTickerModel.onNotify();
@@ -141,24 +141,29 @@ var SessionTimeoutTimeTicker = (function () {
 
 
 function ShowSessionTimeoutWarning() {
-    ShowConfirmDialog("Time left for session to expire: <b><span class='clsSessionTimeout'></span></b> <br><br> Click Confirm to continue your session.", "Session Expiration Warning");
+    ShowConfirmDialog("Time left for session to expire: <b><span class='clsSessionTimeout'></span></b><br> Click Confirm to continue your session.", "Session Expiration Warning");
     $("#btnConfirmProceed").off("click").on("click", function () {
-        $.get(AppModel.SessionResetURL);
-        CloseConfirmDialog();
+        $.get(AppModel.SessionResetURL, function (data) {
+            CloseConfirmDialog();
+            //ShowMsg(data.responseMessage,"Session Reset");
+        });
     });
 }
 
 function ShowSessionTimeoutComplete() {
     //alert("Session Completed");
-    ShowMsg("Your session is expired. <br><br>To Login again, please <a href='" + AppModel.LoginPageURL + "'>Click Here</a>", "Session Timeout");
-    CloseConfirmDialog();
+    //    ShowMsg("Your session is expired. <br><br>To Login again, please <a href='" + AppModel.LoginPageURL + "'>Click Here</a>", "Session Timeout");
+    //    CloseConfirmDialog();
+    window.location.href = "/Home/SessionTimeout";
 
 }
 
-function resetSessionTimer() {
-    var sessionTimeout = 20;
-    var sessionTimeoutNotify = 5;
-    SessionTimeoutTimeTicker.init({ ticks: sessionTimeout, notifyBefore: sessionTimeoutNotify, viewMode: 'MM', onComplete: ShowSessionTimeoutComplete, onNotify: ShowSessionTimeoutWarning });
+function resetSessionTimer() { 
+    var sessionTimeout = 30 * 60;
+    var sessionTimeoutNotify = 5 * 60;
+//        var sessionTimeout = 10;
+//        var sessionTimeoutNotify = 5;
+    SessionTimeoutTimeTicker.init({ ticks: sessionTimeout, displayClass: 'clsSessionTimeout', notifyBefore: sessionTimeoutNotify, viewMode: 'MM', onComplete: ShowSessionTimeoutComplete, onNotify: ShowSessionTimeoutWarning });
 }
 
 //Resseting session while ajax complete
@@ -170,3 +175,4 @@ $(document).ajaxComplete(function () {
 $(document).ready(function () {
     resetSessionTimer();
 });
+
