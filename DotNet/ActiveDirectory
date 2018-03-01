@@ -1,0 +1,75 @@
+
+    private DataTable searchADUsers()
+    {
+
+        DataTable dt = new DataTable();
+        DataColumn dc = new DataColumn();
+        dc.ColumnName = "";
+        dc.ColumnName = "EmpNo";
+        dt.Columns.Add(dc);
+        DataColumn dc1 = new DataColumn();
+        dc1.ColumnName = "FirstName";
+        dt.Columns.Add(dc1);
+        DataColumn dc2 = new DataColumn();
+        dc2.ColumnName = "LastName";
+        dt.Columns.Add(dc2);
+        DataColumn dc3 = new DataColumn();
+        dc3.ColumnName = "Email_ID";
+        dt.Columns.Add(dc3);
+        DataColumn dc4 = new DataColumn();
+        dc4.ColumnName = "LOB";
+        dt.Columns.Add(dc4);
+        DataColumn dc5 = new DataColumn();
+        dc5.ColumnName = "Domain";
+        dt.Columns.Add(dc5);
+
+
+        String strSearch = txtSearchText.Text.Trim();
+        string filter = "(&(objectCategory=person)(objectClass=user)(|(givenName=" + strSearch + "*)(Description=" + strSearch + "*)(sn=" + strSearch + "*)))";
+
+
+        //For Ecelcap
+        DirectorySearcher search = new DirectorySearcher(filter);
+        search.SearchRoot = new DirectoryEntry("LDAP://gc.edelcap.com");
+        foreach (SearchResult result in search.FindAll())
+        {
+            // Do work with data returned for each address entry
+            //string Server = Convert.ToString(ConfigurationManager.AppSettings.Get());
+            DirectoryEntry entry = result.GetDirectoryEntry();
+            ArrayList arr = new ArrayList();
+
+            DataRow dr;
+            dr = dt.NewRow();
+            dr["EmpNo"] = entry.Properties["Description"].Value != null ? entry.Properties["Description"].Value.ToString() : "";
+            dr["FirstName"] = entry.Properties["givenName"].Value != null ? entry.Properties["givenName"].Value.ToString() : "";
+            dr["LastName"] = entry.Properties["sn"].Value != null ? entry.Properties["sn"].Value.ToString() : "";
+            dr["Email_ID"] = entry.Properties["mail"].Value != null ? entry.Properties["mail"].Value.ToString() : "";
+            dr["LOB"] = entry.Properties["postOfficeBox"].Value != null ? entry.Properties["postOfficeBox"].Value.ToString() : "";
+            dr["Domain"] = "EDELCAP";
+            dt.Rows.Add(dr);
+            dr = null;
+        }
+
+        //For ETLIFE
+        search = new DirectorySearcher(filter);
+        search.SearchRoot = new DirectoryEntry("LDAP://gc.etlife.com");
+        foreach (SearchResult result in search.FindAll())
+        {
+            // Do work with data returned for each address entry
+            //string Server = Convert.ToString(ConfigurationManager.AppSettings.Get());
+            DirectoryEntry entry = result.GetDirectoryEntry();
+            ArrayList arr = new ArrayList();
+
+            DataRow dr;
+            dr = dt.NewRow();
+            dr["EmpNo"] = entry.Properties["Description"].Value != null ? entry.Properties["Description"].Value.ToString() : "";
+            dr["FirstName"] = entry.Properties["givenName"].Value != null ? entry.Properties["givenName"].Value.ToString() : "";
+            dr["LastName"] = entry.Properties["sn"].Value != null ? entry.Properties["sn"].Value.ToString() : "";
+            dr["Email_ID"] = entry.Properties["mail"].Value != null ? entry.Properties["mail"].Value.ToString() : "";
+            dr["LOB"] = entry.Properties["postOfficeBox"].Value != null ? entry.Properties["postOfficeBox"].Value.ToString() : "";
+            dr["Domain"] = "ETLIFE";
+            dt.Rows.Add(dr);
+            dr = null;
+        }
+        return dt;
+    }
