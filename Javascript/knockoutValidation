@@ -1,0 +1,80 @@
+
+
+
+<script src="https://code.jquery.com/jquery-1.11.3.js"></script>
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-min.js"></script>
+<script src="https://rawgit.com/ericmbarnard/Knockout-Validation/master/Src/knockout.validation.js"></script>
+  
+
+
+ 
+    $(document).ready(function(){
+      console.log("Iniated");
+      // Activates knockout.js
+      
+      ko.applyBindings(viewModel);
+    });
+    
+    
+    
+  
+  // This is a simple *viewmodel* - JavaScript that defines the data and behavior of your UI
+  function AppViewModel() {
+        this.firstName = ko.observable("").extend({ required: { message: 'Please enter firstName' } });
+    this.lastName = ko.observable().extend({ minLength: 2, maxLength: 10 });
+    
+      this.test = ko.observable("");
+      this.eventNameValidation = function (data, e) {
+        var keyValue = e.key;
+        if (keyValue.match(/([0-9]|-)+/g)) {
+            return true;
+        }
+        return false;
+      }
+      
+      this.onSubmit = function(){
+        if (viewModel.errors().length === 0) {
+            alert('Thank you.');
+        }
+        else {
+            alert('Please check your submission.');
+            viewModel.errors.showAllMessages();
+        }
+      }
+  }
+    
+    var viewModel = new AppViewModel();
+      
+      ko.validation.configure({
+    registerExtenders: true,
+    messagesOnModified: true,
+    insertMessages: true,
+    parseInputAttributes: true,
+    messageTemplate: null
+});
+      
+      viewModel.errors = ko.validation.group(viewModel);
+      
+
+  </script>
+  
+  <!-- This is a *view* - HTML markup that defines the appearance of your UI -->
+  <p data-bind="css: { error: firstName.hasError }" class="">
+    <input data-bind='value: firstName, valueUpdate: "afterkeydown"' />
+</p>
+<p data-bind="css: { error: lastName.hasError }">
+    <input data-bind='value: lastName, valueUpdate: "afterkeydown"' />
+</p>
+  <p>Test: <input type="text" data-bind="value: test,event: { keypress: eventNameValidation }"></strong></p>
+  
+
+<BUTTON data-bind="click:onSubmit"> Submit</BUTTON>
+
+
+
+
+
+
+
+
