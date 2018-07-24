@@ -1,0 +1,57 @@
+
+
+
+// Simple Promise AJax Get request
+    var promise = $.getJSON('https://reqres.in/api/users?page=2');
+    promise.done(function(data){
+      console.log(data);
+      console.log("Success");
+    });
+    promise.fail(function(){
+      console.log("fail");
+    });
+  
+    var promise = $.getJSON('https://reqres.in/api/usrs?page=2')
+    .done(function(data){
+      console.log(data);
+      console.log("Success");
+    })
+    .fail(function(){
+      console.log("fail");
+    })
+  
+  
+  // Always
+ 
+    var promise = $.getJSON('https://reqres.in/api/usrs?page=2')
+    .done(function(data){
+      console.log(data);
+      console.log("Success");
+    })
+    .fail(function(){
+      console.log("fail");
+    })
+    .always(function(){
+      console.log("always runs");
+    })
+  
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
