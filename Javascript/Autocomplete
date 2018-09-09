@@ -47,8 +47,39 @@ $(document).ready(function () {
       }
     ];
     $("#CompanySearch").autocomplete({
-        minLength: 0,
+        minLength: 3,
         source: transporterList,
+        focus: function (event, ui) {
+            //console.log(ui.item);
+            $("#CompanySearch").val(ui.item.TransporterName);
+            return false;
+        },
+        select: function (event, ui) {
+            console.log(ui.item);
+            $("#CompanySearch").val(ui.item.TransporterName);
+            $("#CompanyAddress").val(ui.item.Address);
+            return false;
+        }
+    }).data("autocomplete")._renderItem = function (ul, item) {
+        return $("<li class='autocomplete-list-row'>")
+            .data("item.autocomplete", item)
+            .append("<a>" + item.TransporterName + "<br>" + item.Address + "</a>")
+            .appendTo(ul);
+    };
+    
+    
+    
+    ////////// For remote AutoSearch
+    //API Call
+    ActionResult TransporterSearch (String term){
+        var result = GetDate();
+        return Json(result,JsonResultBeahaviour.AllowGet);
+    }
+    
+    //Script Code
+     $("#CompanySearch").autocomplete({
+        minLength: 3,
+        source: TransporterSearchURL,
         focus: function (event, ui) {
             //console.log(ui.item);
             $("#CompanySearch").val(ui.item.TransporterName);
@@ -70,7 +101,13 @@ $(document).ready(function () {
 
 });
 
-
-
 </script>
+
+
+
+
+
+
+
+
 
