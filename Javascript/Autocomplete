@@ -1,0 +1,76 @@
+
+<style>
+    .autocomplete-list-row {
+        border: 1px solid black;
+        width: 400px;
+        /*height:50px;*/
+        display: list-item;
+        background-color: white;
+    }
+    a.ui-state-hover {
+        background-color: grey;
+    }
+    #ui-active-menuitem {
+        background-color: Highlight;
+    }
+
+    a.ui-corner-all {
+        display: block;
+    }
+</style>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.24/jquery-ui.min.js"></script>
+
+<input type="text" class="form-control" id="CompanySearch">
+
+<script>
+
+$(document).ready(function () {
+    var transporterList = [
+      {
+          label: "Pratik Company",
+          TransporterID: 1,
+          TransporterName: "Pratik Company",
+          Address: "the write less, do more, JavaScript library"
+      },
+      {
+          label: "Prashant Company",
+          TransporterID: 2,
+          TransporterName: "Prashant Company",
+          Address: "the write less, do more, JavaScript library"
+      },
+      {
+          TransporterID: 3,
+          label: "Prem Company",
+          TransporterName: "Prem Company",
+          Address: "the write less, do more, JavaScript library"
+      }
+    ];
+    $("#CompanySearch").autocomplete({
+        minLength: 0,
+        source: transporterList,
+        focus: function (event, ui) {
+            //console.log(ui.item);
+            $("#CompanySearch").val(ui.item.TransporterName);
+            return false;
+        },
+        select: function (event, ui) {
+            console.log(ui.item);
+            $("#CompanySearch").val(ui.item.TransporterName);
+            $("#CompanyAddress").val(ui.item.Address);
+            return false;
+        }
+    }).data("autocomplete")._renderItem = function (ul, item) {
+        return $("<li class='autocomplete-list-row'>")
+            .data("item.autocomplete", item)
+            .append("<a>" + item.TransporterName + "<br>" + item.Address + "</a>")
+            .appendTo(ul);
+    };
+
+
+});
+
+
+
+</script>
+
