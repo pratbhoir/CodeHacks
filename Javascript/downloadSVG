@@ -47,8 +47,11 @@ function downloadSvg(svg, fileName) {
   copyStylesInline(copy, svg);
   var canvas = document.createElement("canvas");
   var bbox = svg.getBBox();
-  canvas.width = bbox.width;
-  canvas.height = bbox.height;
+  var orgBox = svg.getBoundingClientRect(); // get the bounding rectangle
+  //canvas.width = bbox.width;
+  //canvas.height = bbox.height;
+  canvas.width = orgBox.width;
+  canvas.height = orgBox.height;
   var ctx = canvas.getContext("2d");
   ctx.clearRect(0, 0, bbox.width, bbox.height);
   var data = (new XMLSerializer()).serializeToString(copy);
