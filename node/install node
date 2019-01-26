@@ -1,0 +1,23 @@
+375
+
+2019 Solution Without using sudo!
+The Stable "LTS" version of node is 10.15.0 (2019-01-13) see: nodejs.org for latest.
+
+Step 1 - Get NVM (Node Version Manger)
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+
+If you're curious about the installation command read the source code
+... its been reviewed by several security experts
+
+Step 2 - Install the version of node.js you need
+Once you've got NVM you can install a specific version of Node.js using the nvm command:
+
+nvm install v10.15.0
+
+Note: you may need to close & re-open your terminal window for nvm command to be available.
+
+You should expect to see something like this in your terminal:
+
+Now using node v10.15.0
+
+Step 3 - Enjoy the rest of your day!
