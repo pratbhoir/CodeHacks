@@ -1,0 +1,21 @@
+
+Azure Portal: https://portal.azure.com/#home
+DevOps Portal: https://pratbhoir.visualstudio.com/
+
+
+
+
+In Build Yaml
+1. Search and Add a Step (Publish Build Artificats)
+Path to Publish: $(System.ArtifactsDirectory)
+Artifact Name: drop
+Artificat Publish location: Azure Pipeline
+
+2. IN release
+a.Select Azure App Service Deploy
+b. Azure Subscription: Select If any
+c. App Sevice Name: Select u entered earlier
+d. Package or folder: $(System.ArtifactsDirectory)/drop/*.zip     or   $(System.ArtifactsDirectory)/[MVCAPPName]/drop/*.zip
+
+
+$(System.ArtifactsDirectory)/MVCAppDevOpsDemo/drop/*.zip
