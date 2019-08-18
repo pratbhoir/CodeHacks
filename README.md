@@ -1,4 +1,4 @@
-temp
+Code Hacks
 ====
 
-Temp
+Code Snipets for day to day use
