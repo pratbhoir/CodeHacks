@@ -1,0 +1,23 @@
+
+
+
+-------------IN MASTER DB----------------------
+-- Create LOgin in Master Database
+CREATE LOGIN foozyadmin WITH PASSWORD = 'XXXXXXX';
+GO
+-- Create USer in Master Database
+Create user foozyadmin for login foozyadmin
+GO
+
+
+------------IN Application DB--------------------
+-- Create User in DB
+Create user foozyadmin for login foozyadmin
+GO
+-- Grant Permissions for schema for that user
+GRANT SELECT, INSERT, UPDATE, DELETE ON SCHEMA :: foozy TO foozyadmin;
+--REVOKE SELECT, INSERT, UPDATE, DELETE ON SCHEMA :: dbo TO foozyadmin;
+GO
+
+
+
