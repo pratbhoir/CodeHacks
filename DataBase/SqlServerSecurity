@@ -22,3 +22,8 @@ GO
 -- Giving ROles t user --
 EXEC sp_addrolemember 'db_owner', 'foozyadmin';
 GO
+
+
+-- Grant SP Execution to the User
+GRANT EXECUTE TO foozyadmin;
+
