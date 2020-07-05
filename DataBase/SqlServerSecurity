@@ -19,5 +19,6 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON SCHEMA :: foozy TO foozyadmin;
 --REVOKE SELECT, INSERT, UPDATE, DELETE ON SCHEMA :: dbo TO foozyadmin;
 GO
 
-
-
+-- Giving ROles t user --
+EXEC sp_addrolemember 'db_owner', 'foozyadmin';
+GO
