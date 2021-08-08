@@ -1,9 +1,19 @@
 
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
+    includeRootFolder: true
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    replaceExistingArchive: true
+
 - task: AzureFileCopy@4
   inputs:
-    SourcePath: '$(build.artifactStagingDirectory)\WebApp.zip'
+    SourcePath: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
     azureSubscription: 'Pay-As-You-Go (9071bcb7-ff25-4be6-8587-b4cd6c67b841)'
     Destination: 'AzureBlob'
     storage: 'pratbhoirstorage'
     ContainerName: 'azurebuilds'
     BlobPrefix: '$(Build.Repository.Name)\Build$(Build.BuildNumber).zip?sp=rw&st=2021-08-08T12:41:17Z&se=2022-08-08T20:41:17Z&sv=2020-08-04&sr=c&sig=XWRRP6DdyIeBLciFQ7beDv17oqAr17d5cq1rutyNKuw%3D'
+
