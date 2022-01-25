@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+</head>
+<body>
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+  <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2022.1.119/styles/kendo.common.min.css" />
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2022.1.119/styles/kendo.blueopal.min.css" />
+ <script src="https://kendo.cdn.telerik.com/2022.1.119/js/kendo.all.min.js"></script>
+<br>
+  
+  <button onClick="addProduct()">Add</button>
+  
+  <br>
+  
+   <div id="example" class="k-content">
+            <div id="grid"></div>
+
+            <script type="text/javascript">
+              
+              
+              var products = [
+                {
+                  ProductName:"Prod1",
+                  UnitPrice:3
+                },
+                {
+                  ProductName:"Prod2",
+                  UnitPrice:3
+                },
+                {
+                  ProductName:"Prod3",
+                  UnitPrice:3
+                },
+              ]
+              
+              var gridDataSource = new kendo.data.DataSource({
+                data: products,
+                    schema: {
+                        model: {
+                            fields: {
+                                ProductName: { type: "string" },
+                                UnitPrice: { type: "number" },
+                            }
+                        }
+                    },
+                    pageSize: 20
+              });
+              
+              
+                $(document).ready(function() {
+            $("#grid").kendoGrid({
+                dataSource: gridDataSource,
+                sortable: true,
+                filterable: true,
+                columns: [
+                    {
+                      field:"ProductName",
+                    template: "<a><strong>#: ProductName # </strong></a>"
+                    },
+                    { field: "UnitPrice", title: "Unit Price", format: "{0:c}", width: "130px" },
+                ]
+            });
+        });
+              function addProduct(){
+                
+                var newproducts = [
+                {
+                  ProductName:"Prod4",
+                  UnitPrice:3
+                },
+                {
+                  ProductName:"Prod5",
+                  UnitPrice:3
+                },
+                {
+                  ProductName:"Prod6",
+                  UnitPrice:3
+                },
+              ]
+                
+    gridDataSource.data(newproducts);
+  
+  }
+              
+            </script>
+        </div>
+
+  <script>
+
+  </script>
+
+</body>
+</html>
