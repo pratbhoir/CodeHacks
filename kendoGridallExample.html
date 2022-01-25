@@ -1,0 +1,85 @@
+
+    var gridDataSource;
+
+    function loadKendoGrid() {
+
+        gridDataSource = new kendo.data.DataSource({
+            data: [],
+            //schema: {
+            //    model: {
+            //        fields: {
+            //            Users: { type: "string" },
+            //            UnknownDocs: { type: "number" },
+            //        }
+            //    }
+            //},
+            //pageSize: 20
+        });
+
+        $("#titleExpeditorGrid").kendoGrid({
+            dataSource: gridDataSource,
+            columns: [
+                {
+                    field: "UserName",
+                    title: "Users",
+                    width: "20%",
+                },
+                {
+                    field: "States",
+                    title: "States",
+                    width: "10%",
+                },
+                {
+                    field: "UnknownCount",
+                    title: "Unknown Docs",
+                    template: "<a href=\"\\#\" onclick=\"titleExpeditorViewModel.redirectToTPQForUnknownCount()({ASAPUserId: #: ASAPUserId#,UserName: '#: UserName#'}); return false;\"><span>#: UnknownCount # </span></a>",
+                    width: "10%",
+                },
+                {
+                    field: "OverDueCount",
+                    title: "Overdue",
+                    template: "<a href=\"\\#\" onclick=\"titleExpeditorViewModel.redirectToTPQForOverDueCount()({ASAPUserId: #: ASAPUserId#,UserName: '#: UserName#'}); return false;\"><span>#: OverDueCount # </span></a>",
+                    width: "10%",
+                },
+                {
+                    field: "RedCount",
+                    title: "SLA <4 HRS",
+                    template: "<a href=\"\\#\" onclick=\"titleExpeditorViewModel.redirectToTPQForRedCount()({ASAPUserId: #: ASAPUserId#,UserName: '#: UserName#'}); return false;\"><span>#: RedCount # </span></a>",
+                    width: "10%",
+                },
+                {
+                    field: "YellowCount",
+                    title: "SLA 4-8 HRS",
+                    template: "<a href=\"\\#\" onclick=\"titleExpeditorViewModel.redirectToTPQForYellowCount()({ASAPUserId: #: ASAPUserId#,UserName: '#: UserName#'}); return false;\"><span>#: YellowCount # </span></a>",
+                    width: "10%",
+                },
+                {
+                    field: "GreyCount",
+                    title: "SLA > 8HRS",
+                    template: "<a href=\"\\#\" onclick=\"titleExpeditorViewModel.redirectToTPQForGreyCount()({ASAPUserId: #: ASAPUserId#,UserName: '#: UserName#'}); return false;\"><span>#: GreyCount # </span></a>",
+                    width: "10%",
+                },
+                {
+                    field: "TotalCount",
+                    title: "TOTAL STOCKS",
+                    template: "<a href=\"\\#\" onclick=\"titleExpeditorViewModel.redirectToTPQForTotalCount()({ASAPUserId: #: ASAPUserId#,UserName: '#: UserName#'}); return false;\"><span>#: TotalCount # </span></a>",
+                    width: "10%",
+                },
+                {
+                    field: "Actions",
+                    title: " ",
+                    width: "220px",
+                    template: kendo.template($("#gridViewActionTemplate").html()),
+                    sortable: false,
+                    filterable: false
+                },
+            ],
+            sortable: true,
+            filterable: true
+        });
+
+    }
+
+    function loadKendoGridData() {
+        gridDataSource.data(titleExpeditorViewModel.TitleExpeditorUsersList());
+    }
