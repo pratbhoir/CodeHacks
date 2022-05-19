@@ -1,0 +1,89 @@
+import { Component, OnInit } from '@angular/core';
+import { IpolistService, IpolistModel } from '../../services/ipolist.service';
+import html2canvas from "html2canvas";
+
+@Component({
+  selector: 'app-ipolist',
+  templateUrl: './ipolist.component.html',
+  styleUrls: ['./ipolist.component.css']
+})
+export class IpolistComponent implements OnInit {
+  private ipolistService: IpolistService;
+  ipoListDetails: IpolistModel[] = [];
+
+
+
+  constructor(ipolistService: IpolistService) {
+    this.ipolistService = ipolistService
+  }
+
+  ngOnInit(): void {
+    this.ipoListDetails = this.ipolistService.getIpoList();
+  }
+
+  share(ipoID: string): void {
+    console.log(ipoID);
+
+    var element = document.getElementById("ShareIpo_" + ipoID) as HTMLElement;
+
+    html2canvas(element).then((canvas) => {
+      // var imgData = canvas.toDataURL("image/png");
+      // console.log(imgData);
+      // this.download(imgData,"image.png");
+      canvas.toBlob(function (blob) {
+        // console.log(blob);
+        var file = new File([blob as Blob], "picture.jpg", { type: 'image/jpeg' });
+        var filesArray = [file];
+
+        navigator.share({
+          title: 'IPO World LIC',
+          text: 'IPO World LIC IPO Details subscriptions',
+          url: 'https://nice-sea-0d1176710.azurestaticapps.net/',
+          files: [file]
+        } as ShareData);
+      });
+    });
+
+    // html2canvas(element).then(canvas => {
+    //   var imgData = canvas.toDataURL("image/png");
+    //   fetch(imgData)
+    //     .then(function (response) {
+    //       // console.log(response.blob());
+    //       return response.blob()
+    //     })
+    //     .then(function (blob) {
+
+    //       var file = new File([blob], "picture.jpg", { type: 'image/jpeg' });
+    //       var filesArray = [file];
+
+    //       navigator.share({
+    //         title: 'IPO World LIC',
+    //         text: 'IPO World LIC IPO Details subscriptions',
+    //         url: 'https://nice-sea-0d1176710.azurestaticapps.net/',
+    //         files: [file]
+    //       } as ShareData);
+
+    //     }).
+    //     catch(err => {
+    //       throw err
+    //     });
+    // });
+
+
+  }
+
+  download(url: string, filename: string): void {
+    fetch(url)
+      .then(response => response.blob())
+      .then(blob => {
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
+      })
+      .catch(console.error);
+  }
+
+
+}
+
