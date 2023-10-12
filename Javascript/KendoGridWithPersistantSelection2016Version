@@ -1,0 +1,136 @@
+
+  <div id="TPMGenericStocksGrid"></div>
+  
+  
+  
+<script>
+    var TPMGenericStockGridSelectedIds = [];
+
+        $(document).ready(function () {
+            $("#TPMGenericStocksGrid").kendoGrid({
+                scrollable: true,
+                sortable: true,
+                pageable: {
+                    pageSizes: [5, 10, 20, "all"],
+                    numeric: false
+                },
+                columns: [
+                    {
+                        headerTemplate: "<input id='TPMGenericStocksGridCheckAll' type='checkbox' class='row-checkbox k-checkbox-md k-rounded-md' onchange='TPMGenericStocksGridSelectAll(event)'/>",
+                        width: 50,
+                        template: function (dataItem) {
+                            return "<input type='checkbox' id='TPMGenericStock" + dataItem.SalvageID + "' class='row-checkbox' style=' width: 15px; height: 15px; opacity: 1; position: relative;' , onclick = 'TPMGenericSelectGridRow(this)'>";
+                        },
+                    },
+                    { field: "StockNumber" },
+                    { field: "MakeYearModel" },
+                    { field: "ProviderName" },
+                ],
+                dataSource: {
+                    data:[]
+                },
+                dataBound: function (e) {
+                    TPMGenericLoadSelection();
+                }
+            });
+
+            //Passing TestData
+            var testData = [];
+            for (var i = 1; i <= 50; i++) {
+                testData.push({ SalvageID: i, StockNumber: "StockNumber" + i, MakeYearModel: "MakeYearModel"+i, ProviderName: "ProviderName"+i  })
+            }
+            TPMGenericLoadData(testData);
+
+        });
+
+    function TPMGenericLoadData(data) {
+        var dataSource = new kendo.data.DataSource({
+            data: data,
+            pageSize:10
+        });
+        var grid = $("#TPMGenericStocksGrid").data("kendoGrid");
+        grid.setDataSource(dataSource);
+    }
+
+    function TPMGenericStocksGridSelectAll(e) {
+        var checked = e.target.checked;
+        $('#TPMGenericStocksGrid .row-checkbox').each(function (idx, item) {
+            if (checked) {
+                //if (!($(item).closest('tr').is('.k-state-selected'))) {
+                if (!$(item).is(':checked')) {
+                    $(item).click();
+                }
+            } else {
+                if ($(item).is(':checked')) {
+                    $(item).click();
+                }
+            }
+        });
+    }
+
+    function TPMGenericLoadSelection() {
+        let selectedIds = TPMGenericStockGridSelectedIds;
+        $('#TPMGenericStocksGrid #TPMGenericStocksGridCheckAll').prop('checked', false);
+        if (selectedIds.length > 0) {
+            for (var i = 0; i < selectedIds.length; i++) {
+                $('#TPMGenericStocksGrid #TPMGenericStock' + selectedIds[i]).prop('checked', true);
+            }
+            if ($("#TPMGenericStocksGrid .k-grid-content .row-checkbox").length == $("#TPMGenericStocksGrid .k-grid-content :checked").length) {
+                $('#TPMGenericStocksGrid #TPMGenericStocksGridCheckAll').prop('checked', true);
+            }
+            $("#TPMGenericStocksGrid .k-grid-content :checked").closest("tr").addClass("k-state-selected");
+        }
+    }
+
+    //on click of the checkbox:
+    function TPMGenericSelectGridRow(selectedRow) {
+        var checked = selectedRow.checked,
+            row = $(selectedRow).closest("tr"),
+            grid = $("#TPMGenericStocksGrid").data("kendoGrid"),
+            dataItem = grid.dataItem(row);
+        if (checked) {
+            TPMGenericStockGridSelectedIds.push(dataItem.SalvageID);
+            //-select the row
+            if (row.hasClass("k-state-selected"))
+                row.removeClass("k-state-selected");
+            row.addClass("k-state-selected");
+            var checkHeader = true;
+            $.each(grid.items(), function (index, item) {
+                if (!($(item).hasClass("k-state-selected"))) {
+                    checkHeader = false;
+                }
+            });
+            $("#TPMGenericStocksGridCheckAll")[0].checked = checkHeader;
+        }
+        else {
+            //-remove selection
+            const index = TPMGenericStockGridSelectedIds.indexOf(dataItem.SalvageID);
+            if (index > -1) {
+                TPMGenericStockGridSelectedIds.splice(index, 1);
+            }
+            loggedInUserId
+            row.removeClass("k-state-selected");
+            $("#TPMGenericStocksGridCheckAll")[0].checked = false;
+
+        }
+    }
+
+    </script>
+
+
+<style>
+    #TPMGenericStocksGrid .k-grid-content {
+        min-height: 100px;
+        max-height: 450px;
+    }
+
+    #TPMGenericStocksGrid .row-checkbox {
+        height: 20px !important;
+        width: 20px !important;
+        opacity: 100;
+    }
+    #TPMGenericStocksGrid .k-grid-header th.k-header {
+        vertical-align: top;
+    }
+</style>
+  
