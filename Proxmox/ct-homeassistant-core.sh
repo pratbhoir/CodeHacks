@@ -19,9 +19,9 @@ EOF
 header_info
 echo -e "Loading..."
 APP="Home Assistant-Core"
-var_disk="8"
+var_disk="20"
 var_cpu="2"
-var_ram="1024"
+var_ram="2048"
 var_os="ubuntu"
 var_version="24.04"
 variables
@@ -37,8 +37,8 @@ function default_settings() {
   CORE_COUNT="$var_cpu"
   RAM_SIZE="$var_ram"
   BRG="vmbr0"
-  NET="dhcp"
-  GATE=""
+  NET="192.168.0.35/24"
+  GATE="192.168.0.2"
   APT_CACHER=""
   APT_CACHER_IP=""
   DISABLEIP6="no"
